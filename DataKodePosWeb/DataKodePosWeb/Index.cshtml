@@ -1,0 +1,479 @@
+﻿<!DOCTYPE html>
+<html>
+<head>
+    <title>Data Kode Pos</title>
+    <style>
+        th {
+            width: 200px;
+        }
+
+        a {
+            text-decoration: none;
+        }
+
+        .btn {
+            background: #4E9CAF;
+            padding-left: 10px;
+            padding-right: 10px;
+            padding-top: 5px;
+            padding-bottom: 5px;
+            text-align: center;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .btn-edit {
+            background: #4E9CAF;
+            padding-left: 5px;
+            padding-right: 5px;
+            text-align: center;
+            border-radius: 5px;
+            color: white;
+        }
+
+        .td-select {
+            cursor: pointer;
+        }
+
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background: rgba(128, 128, 128, 0.1); /*Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            background-color: rgb(198, 243, 255);
+            margin: auto;
+            padding: 20px;
+            border: 1px solid #888;
+            border-radius: 30px 30px 30px 0px;
+            width: 50%;
+        }
+    </style>
+</head>
+<body onload="initialize()">
+    <div id="mainpage">
+        <label>Propinsi/Kabupaten</label>
+        <input id="searchtxt" type="text" />
+        <a href="#" class="btn" title="Cari Data berdasarkan propinsi & kabupaten" onclick="cariData()">Cari</a>
+        <a href="#" class="btn" title="Tambah Data Baru" onclick="tambahData()">Tambah Data</a>
+        <br />
+        <hr />
+        <br />
+        <table>
+            <tbody>
+                <tr>
+                    <td style="vertical-align:top;">
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">No</th>
+                                    <th>Propinsi</th>
+                                    <th>Kabupaten/Kota</th>
+                                    <th style="width: 50px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="propkabtbl"></tbody>
+                        </table>
+                    </td>
+                    <td style="vertical-align:top;">
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">No</th>
+                                    <th>Kecamatan</th>
+                                    <th style="width: 50px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kecamatantbl"></tbody>
+                        </table>
+                    </td>
+                    <td style="vertical-align:top;">
+                        <table border="1">
+                            <thead>
+                                <tr>
+                                    <th style="width: 50px;">No</th>
+                                    <th>Kelurahan</th>
+                                    <th style="width: 100px;">Kode Pos</th>
+                                    <th style="width: 50px;">Action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="kelurahantbl"></tbody>
+                        </table>
+                    </td>
+                </tr>
+                <tr>
+                    <td>
+                        <a href="#" class="btn" onclick="propKabGoToPage(2)" title="ke halaman pertama">First</a>
+                        <a href="#" class="btn" onclick="propKabGoToPage(0)" title="ke halaman sebelumnya">Prev</a>
+                        <label id="pagePropKab">Page 2 of 10</label>
+                        <a href="#" class="btn" onclick="propKabGoToPage(1)" title="ke halaman berikutnya">Next</a>
+                        <a href="#" class="btn" onclick="propKabGoToPage(3)" title="ke halaman terakhir">Last</a>
+                    </td>
+                    <td>
+                        <a href="#" class="btn" onclick="kecamatanGoToPage(2)" title="ke halaman pertama">First</a>
+                        <a href="#" class="btn" onclick="kecamatanGoToPage(0)" title="ke halaman sebelumnya">Prev</a>
+                        <label id="pageKecamatan">Page 4 of 10</label>
+                        <a href="#" class="btn" onclick="kecamatanGoToPage(1)" title="ke halaman berikutnya">Next</a>
+                        <a href="#" class="btn" onclick="kecamatanGoToPage(3)" title="ke halaman terakhir">Last</a>
+                    </td>
+                    <td>
+                        <a href="#" class="btn" onclick="kelurahanGoToPage(2)" title="ke halaman pertama">First</a>
+                        <a href="#" class="btn" onclick="kelurahanGoToPage(0)" title="ke halaman sebelumnya">Prev</a>
+                        <label id="pageKelurahan">Page 5 of 10</label>
+                        <a href="#" class="btn" onclick="kelurahanGoToPage(1)" title="ke halaman berikutnya">Next</a>
+                        <a href="#" class="btn" onclick="kelurahanGoToPage(3)" title="ke halaman terakhir">Last</a>
+                    </td>
+                </tr>
+            </tbody>
+        </table>
+
+        <br />
+        <hr />
+        <br />
+
+    </div>
+    <div id="insertpage" class="modal">
+        <div class="modal-content">
+            <p>
+                <label>Propinsi</label>
+                <input id="propinsiinput" type="text" />
+            </p>
+            <p>
+                <label>Kabupaten/Kota</label>
+                <input id="kabkotainput" type="text" />
+            </p>
+            <p>
+                <label>Kecamatan</label>
+                <input id="kecamataninput" type="text" />
+            </p>
+            <p>
+                <label>Kelurahan</label>
+                <input id="Kelurahaninput" type="text" />
+            </p>
+            <p>
+                <label>Kode Pos</label>
+                <input id="Kodeposinput" type="text" />
+            </p>
+            <br />
+            <a href="#" class="btn" title="Batal" onclick="batal()">Batal</a>
+            <a href="#" class="btn" title="Simpan" onclick="simpanData()">Simpan Data</a>
+        </div>
+    </div>
+    <div id="deletepage" class="modal">
+        <div class="modal-content">
+            <h4>Konfirmasi hapus data</h4>
+            <p id="hapusTxt">Hapus?</p>
+            <a href="#" class="btn" title="Batal" onclick="batalHapus()">Batal</a>
+            <a href="#" class="btn" id="hapusOnClick" title="Simpan" onclick="hapusData()">Hapus Data</a>
+        </div>
+    </div>
+    <div id="updatepage" class="modal">
+        <div class="modal-content">
+            <h4>Konfirmasi ubah data</h4>
+            <p id="ubahTxt">ubah?</p>
+            <a href="#" class="btn" title="Batal" onclick="batalUbah()">Batal</a>
+            <a href="#" class="btn" id="ubahOnClick" title="Simpan" onclick="ubahData()">Ubah Data</a>
+        </div>
+    </div>
+    <script type="text/javascript" src="../Scripts/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript">
+        var _dataPropKab;
+        var _dataKecamatan;
+        var _dataKelurahan;
+
+        function initialize() {
+            document.getElementById('mainpage').style.display = 'block';
+            document.getElementById('insertpage').style.display = 'none';
+
+            _dataPropKab = {
+                type: 0,
+                value: '',
+                pageIndex: 1,
+                pageCount: 1
+            };
+
+            _dataKecamatan = {
+                type: 1,
+                value: '',
+                pageIndex: 1,
+                pageCount: 1
+            };
+
+            _dataKelurahan = {
+                type: 2,
+                value: '',
+                pageIndex: 1,
+                pageCount: 1
+            };
+
+            cariData();
+        }
+        function tambahData() {
+            document.getElementById('mainpage').style.display = 'none';
+            document.getElementById('insertpage').style.display = 'block';
+        }
+        function batal() {
+            document.getElementById('mainpage').style.display = 'block';
+            document.getElementById('insertpage').style.display = 'none';
+        }
+        function simpanData() {
+            document.getElementById('mainpage').style.display = 'block';
+            document.getElementById('insertpage').style.display = 'none';
+
+            let data = {
+                propinsi: 'propinsi'
+            };
+
+            postApi('SaveData', data);
+        }
+
+        function cariData() {
+            _dataPropKab.value = document.getElementById('searchtxt').value;
+            _dataPropKab.pageIndex = 1;
+            _dataKecamatan.pageIndex = 1;
+            _dataKelurahan.pageIndex = 1;
+            document.getElementById('kecamatantbl').innerHTML = '';
+            document.getElementById('kelurahantbl').innerHTML = '';
+            Search();
+        }
+        function propKabClick(param) {
+
+            _dataKecamatan.pageIndex = 1;
+            _dataKelurahan.pageIndex = 1;
+            document.getElementById('kelurahantbl').innerHTML = '';
+
+            if (_dataKecamatan.value != '') {
+                let _previd = 'propkabid' + _dataKecamatan.value;
+                let _elem = document.getElementById(_previd);
+                if (_elem != null) {
+                    _elem.style.backgroundColor = '';
+                }
+            }
+            _dataKecamatan.value = param;
+            let _id = 'propkabid' + param;
+            document.getElementById(_id).style.backgroundColor = '#d2fafc';
+
+            postApi('Search', _dataKecamatan);
+        }
+        function KecamatanClick(param) {
+            _dataKelurahan.pageIndex = 1;
+            if (_dataKelurahan.value != '') {
+                let _previd = 'kecamatanid' + _dataKelurahan.value;
+                let _elem = document.getElementById(_previd);
+                if (_elem != null) {
+                    _elem.style.backgroundColor = '';
+                }
+            }
+            _dataKelurahan.value = param;
+            let _id = 'kecamatanid' + param;
+            document.getElementById(_id).style.backgroundColor = '#d2fafc';
+
+            postApi('Search', _dataKelurahan);
+        }
+
+        function propKabGoToPage(param) {
+
+            if (param == 0) {
+                if (_dataPropKab.pageIndex > 1) {
+                    _dataPropKab.pageIndex -= 1;
+                }
+            }
+            else if (param == 1) {
+                if (_dataPropKab.pageIndex < _dataPropKab.pageCount) {
+                    _dataPropKab.pageIndex += 1;
+                }
+            }
+            else if (param == 2) {
+                _dataPropKab.pageIndex = 1;
+            }
+            else if (param == 3) {
+                _dataPropKab.pageIndex = _dataPropKab.pageCount;
+            }
+
+            postApi('Search', _dataPropKab);
+        }
+
+        function kecamatanGoToPage(param) {
+
+            if (param == 0) {
+                if (_dataKecamatan.pageIndex > 1) {
+                    _dataKecamatan.pageIndex -= 1;
+                }
+            }
+            else if (param == 1) {
+                if (_dataKecamatan.pageIndex < _dataKecamatan.pageCount) {
+                    _dataKecamatan.pageIndex += 1;
+                }
+            }
+            else if (param == 2) {
+                _dataKecamatan.pageIndex = 1;
+            }
+            else if (param == 3) {
+                _dataKecamatan.pageIndex = _dataKecamatan.pageCount;
+            }
+
+            postApi('Search', _dataKecamatan);
+        }
+
+        function kelurahanGoToPage(param) {
+
+            if (param == 0) {
+                if (_dataKelurahan.pageIndex > 1) {
+                    _dataKelurahan.pageIndex -= 1;
+                }
+            }
+            else if (param == 1) {
+                if (_dataKelurahan.pageIndex < _dataKelurahan.pageCount) {
+                    _dataKelurahan.pageIndex += 1;
+                }
+            }
+            else if (param == 2) {
+                _dataKelurahan.pageIndex = 1;
+            }
+            else if (param == 3) {
+                _dataKelurahan.pageIndex = _dataKelurahan.pageCount;
+            }
+
+            postApi('Search', _dataKelurahan);
+        }
+        function batalHapus() {
+            document.getElementById('deletepage').style.display = 'none';
+        }
+        function hapusKelurahan(param) {
+            document.getElementById('deletepage').style.display = 'block';
+            let _data = {
+                value: param
+            };
+            document.getElementById('hapusOnClick').onclick = function () { hapusData(param) };
+            postApi('GetKelurahanName', _data);
+        }
+        function hapusData(param) {
+            document.getElementById('deletepage').style.display = 'none';
+
+            let _data = {
+                value: param
+            };
+            postApi('Delete', _data);
+        }
+        function ubahKelurahan(param) {
+
+            document.getElementById('updatepage').style.display = 'block';
+        }
+        function Search() {
+            postApi('Search', _dataPropKab);
+        }
+        function getApi(path, data) {
+            callApi('GET', path, data);
+        }
+
+        function postApi(path, data) {
+            callApi('POST', path, data);
+        }
+
+        function callApi(method, path, data) {
+            $.when(
+        $.ajax({
+            type: method,
+            url: '/' + path,
+            crossDomain: true,
+            data: data,
+            async: true,
+            dataType: 'json',
+            contentType: 'application/x-www-form-urlencoded',
+            xhrFields: { withCredentials: true, cors: false },
+            success: function (response) {
+                apiResult(response);
+            },
+            error: function (xhr, ajaxOptions, thrownError) {
+                let result = {
+                    xhr: xhr,
+                    ajaxOptions: ajaxOptions,
+                    thrownError: thrownError
+                };
+                //console.log('UIServices', result);
+                return result;
+            }
+        })
+    );
+        }
+
+        function apiResult(response) {
+
+            let _data = response.Data;
+            let _type = response.SearchType;
+            if (_type == 0) {
+                document.getElementById('pagePropKab').innerText = 'Page ' + response.PageIndex + ' of ' +
+                    response.PageCount;
+
+                _dataPropKab.pageIndex = response.PageIndex;
+                _dataPropKab.pageCount = response.PageCount;
+                let tbody = '';
+                for (let i = 0; i < _data.length; i++) {
+                    let _hrefUbah = "<a href='#' class='btn-edit' title='ubah' onclick=''>o</a>";
+                    let _hrefHapus = "<a href='#' class='btn-edit' title='hapus' onclick=''>x</a>";
+                    let _href = _hrefUbah + '   ' + _hrefHapus;
+                    let _no = '<td>' + _data[i].No + '</td>';
+                    let _prop = "<td class='td-select' onclick='propKabClick(" + _data[i].Id + ")'>" + _data[i].Propinsi + '</td>';
+                    let _kab = "<td class='td-select' onclick='propKabClick(" + _data[i].Id + ")'>" + _data[i].Kabupaten + '</td>';
+                    let _action = '<td>' + _href + '</td>';
+                    tbody += "<tr id='propkabid" + _data[i].Id + "'>" + _no + _prop + _kab + _action + '</tr>';
+                }
+                document.getElementById('propkabtbl').innerHTML = tbody;
+            }
+            else if (_type == 1) {
+                document.getElementById('pageKecamatan').innerText = 'Page ' + response.PageIndex + ' of ' +
+                    response.PageCount;
+
+                _dataKecamatan.pageIndex = response.PageIndex;
+                _dataKecamatan.pageCount = response.PageCount;
+                let tbody = '';
+                for (let i = 0; i < _data.length; i++) {
+                    let _hrefUbah = "<a href='#' class='btn-edit' title='ubah' onclick=''>o</a>";
+                    let _hrefHapus = "<a href='#' class='btn-edit' title='hapus' onclick=''>x</a>";
+                    let _href = _hrefUbah + '   ' + _hrefHapus;
+                    let _no = '<td>' + _data[i].No + '</td>';
+                    let _kec = "<td class='td-select' onclick='KecamatanClick(" + _data[i].Id + ")'>" + _data[i].Kecamatan + '</td>';
+                    let _action = '<td>' + _href + '</td>';
+                    tbody += "<tr id='kecamatanid" + _data[i].Id + "'>" + _no + _kec + _action + '</tr>';
+                }
+                document.getElementById('kecamatantbl').innerHTML = tbody;
+            }
+            else if (_type == 2) {
+                document.getElementById('pageKelurahan').innerText = 'Page ' + response.PageIndex + ' of ' +
+                    response.PageCount;
+
+                _dataKelurahan.pageIndex = response.PageIndex;
+                _dataKelurahan.pageCount = response.PageCount;
+                let tbody = '';
+                for (let i = 0; i < _data.length; i++) {
+                    let _hrefUbah = "<a href='#' class='btn-edit' title='ubah' onclick='ubahKelurahan(" + _data[i].Id + ")'>o</a>";
+                    let _hrefHapus = "<a href='#' class='btn-edit' title='hapus' onclick='hapusKelurahan(" + _data[i].Id + ")'>x</a>";
+                    let _href = _hrefUbah + '   ' + _hrefHapus;
+                    let _no = '<td>' + _data[i].No + '</td>';
+                    let _kec = "<td class='td-select' onclick='KelurahanClick(" + _data[i].Id + ")'>" + _data[i].Kelurahan + '</td>';
+                    let _kodepos = "<td class='td-select' onclick='KelurahanClick(" + _data[i].Id + ")'>" + _data[i].Kodepos + '</td>';
+                    let _action = '<td>' + _href + '</td>';
+                    tbody += "<tr id='kelurahanid" + _data[i].Id + "'>" + _no + _kec + _kodepos + _action + '</tr>';
+                }
+                document.getElementById('kelurahantbl').innerHTML = tbody;
+            }
+            else if (_type == 3) {
+                document.getElementById('hapusTxt').innerText = 'hapus kelurahan ' + _data + '?';
+            }
+            else if (_type == 4) {
+                kelurahanGoToPage(0);
+            }
+        }
+    </script>
+</body>
+
+</html>
